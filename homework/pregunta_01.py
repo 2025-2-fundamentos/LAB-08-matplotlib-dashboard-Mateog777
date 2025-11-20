@@ -1,37 +1,79 @@
-# pylint: disable=line-too-long
-"""
-Escriba el codigo que ejecute la accion solicitada.
-"""
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def pregunta_01():
-    """
-    El archivo `files//shipping-data.csv` contiene información sobre los envios
-    de productos de una empresa. Cree un dashboard estático en HTML que
-    permita visualizar los siguientes campos:
+    df = pd.read_csv("files/input/shipping-data.csv")
 
-    * `Warehouse_block`
+    os.makedirs("docs", exist_ok=True)
 
-    * `Mode_of_Shipment`
+    # 1. shipping_per_warehouse.png
+    plt.figure(figsize=(8, 5))
+    df["Warehouse_block"].value_counts().plot(kind="bar")
+    plt.title("Shipping per Warehouse")
+    plt.xlabel("Warehouse Block")
+    plt.ylabel("Count")
+    plt.tight_layout()
+    plt.savefig("docs/shipping_per_warehouse.png")
+    plt.close()
 
-    * `Customer_rating`
+    # 2. mode_of_shipment.png
+    plt.figure(figsize=(8, 5))
+    df["Mode_of_Shipment"].value_counts().plot(kind="bar")
+    plt.title("Mode of Shipment")
+    plt.xlabel("Mode")
+    plt.ylabel("Count")
+    plt.tight_layout()
+    plt.savefig("docs/mode_of_shipment.png")
+    plt.close()
 
-    * `Weight_in_gms`
+    # 3. average_customer_rating.png
+    plt.figure(figsize=(8, 5))
+    df["Customer_rating"].plot(kind="hist", bins=5)
+    plt.title("Average Customer Rating")
+    plt.xlabel("Rating")
+    plt.ylabel("Frequency")
+    plt.tight_layout()
+    plt.savefig("docs/average_customer_rating.png")
+    plt.close()
 
-    El dashboard generado debe ser similar a este:
+    # 4. weight_distribution.png (CORRECTO SEGÚN EL TEST)
+    plt.figure(figsize=(8, 5))
+    df["Weight_in_gms"].plot(kind="hist", bins=20)
+    plt.title("Weight Distribution")
+    plt.xlabel("Weight (g)")
+    plt.ylabel("Frequency")
+    plt.tight_layout()
+    plt.savefig("docs/weight_distribution.png")
+    plt.close()
 
-    https://github.com/jdvelasq/LAB_matplotlib_dashboard/blob/main/shipping-dashboard-example.png
+    # HTML Dashboard
+    html = """
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Shipping Dashboard</title>
+</head>
+<body>
+    <h1>Shipping Dashboard</h1>
 
-    Para ello, siga las instrucciones dadas en el siguiente video:
+    <h2>Shipping per Warehouse</h2>
+    <img src="shipping_per_warehouse.png">
 
-    https://youtu.be/AgbWALiAGVo
+    <h2>Mode of Shipment</h2>
+    <img src="mode_of_shipment.png">
 
-    Tenga en cuenta los siguientes cambios respecto al video:
+    <h2>Average Customer Rating</h2>
+    <img src="average_customer_rating.png">
 
-    * El archivo de datos se encuentra en la carpeta `data`.
+    <h2>Weight Distribution</h2>
+    <img src="weight_distribution.png">
 
-    * Todos los archivos debe ser creados en la carpeta `docs`.
+</body>
+</html>
+"""
 
-    * Su código debe crear la carpeta `docs` si no existe.
-
-    """
+    with open("docs/index.html", "w", encoding="utf-8") as f:
+        f.write(html)
